@@ -20,6 +20,11 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
+        if ($request->method() !== 'POST') {
+            return response()->json([
+                'is_error' => true,
+                'message' => ['Method error']], 422);
+        }
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -106,30 +111,19 @@ class AuthController extends Controller
                 'type' => 'bearer',
             ]
         ]);
-        // $this->validate($request, [
-        //     'token' => 'required'
-        // ]);
-        // try {
-        //     Auth::invalidate($request->bearerToken());
-        //     return response()->json([
-        //         'is_error' => false,
-        //         'user' => Auth::user(),
-        //         'authorisation' => [
-        //             'token' => Auth::refresh(),
-        //             'type' => 'bearer',
-        //         ]
-        //     ]);
-        // } catch (AuthorizationException $exception) {
-        //     return response()->json([
-        //         'is_error' => true,
-        //         'message' => 'Token Blacklisted',
-        //     ], Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        // }
-        // $auth = Auth::check();
-        // if (!$auth) {
-
-        // }
-
+    }
+    public function user(Request $request)
+    {
+        return response()->json([
+            'is_error' => false,
+            'user' => Auth::user(),
+        ]);
+    }
+    public function unauthorized(Request $request)
+    {
+        return response()->json([
+            'is_error' => true,
+            'message' => 'Unauthorized',
+        ]);
     }
 }
